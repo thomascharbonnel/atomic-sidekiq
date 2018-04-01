@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/Colex/atomic-sidekiq.svg?branch=master)](https://travis-ci.org/Colex/atomic-sidekiq)
+[![Gem Version](https://badge.fury.io/rb/atomic-sidekiq.svg)](https://badge.fury.io/rb/atomic-sidekiq) [![Build Status](https://travis-ci.org/Colex/atomic-sidekiq.svg?branch=master)](https://travis-ci.org/Colex/atomic-sidekiq) [![codecov](https://codecov.io/gh/Colex/atomic-sidekiq/branch/master/graph/badge.svg)](https://codecov.io/gh/Colex/atomic-sidekiq)
 
 # AtomicSidekiq
 AtomicSidekiq implements a reliable way of processing jobs using Sidekiq. By default, Sidekiq will retrieve jobs from the queue by removing it from Redis. If the job fails to complete (e.g. the process terminates unexpectdly mid-job), the job will be lost forever. This can be acceptable in many applications, but some application require higher levels of reliability, hence AtomicSidekiq will not erase any job from Redis until it's acknowledged that they have finished - otherwise, they are re-scheduled.
