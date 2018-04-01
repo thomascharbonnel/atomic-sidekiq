@@ -4,3 +4,9 @@ Style/StringLiterals:
 Naming/FileName:
   Exclude:
     - "lib/atomic-sidekiq.rb"
+
+Style/DoubleNegation:
+  Enabled: false
+
+Style/Documentation:
+  Enabled: false

@@ -1,20 +1,20 @@
+# rubocop:disable Style/ClassVars
 module AtomicSidekiq
   class AtomicFetch
-    IN_FLIGHT_KEY_PREFIX = "flight:"
+    IN_FLIGHT_KEY_PREFIX = "flight:".freeze
     DEFAULT_POLL_INTERVAL = 10 # seconds
     DEFAULT_EXPIRATION_TIME = 3600 # seconds
     DEFAULT_COLLECTION_INTERVAL = 60 # seconds
 
     def initialize(options)
-      @retrieve_op = AtomicOperation::Retrieve.new(in_flight_prefix: IN_FLIGHT_KEY_PREFIX)
+      @retrieve_op = AtomicOperation::Retrieve.new(
+        in_flight_prefix: IN_FLIGHT_KEY_PREFIX
+      )
+      @queues ||= options[:queues].map { |q| "queue:#{q}" }
       @strictly_ordered_queues = !!options[:strict]
-
-      atomic_fetch_opts = options.fetch(:atomic_fetch, {})
-      @expiration_time = atomic_fetch_opts.fetch(:expiration_time, DEFAULT_EXPIRATION_TIME)
-      @collection_interval = atomic_fetch_opts.fetch(:collection_wait_time, DEFAULT_COLLECTION_INTERVAL)
-      @poll_interval = atomic_fetch_opts.fetch(:poll_interval, DEFAULT_POLL_INTERVAL)
       @@next_collection ||= Time.now
-      set_queues(options)
+
+      configure_atomic_fetch(options.fetch(:atomic_fetch, {}))
     end
 
     def retrieve_work
@@ -28,10 +28,15 @@ module AtomicSidekiq
     private
 
     attr_reader :retrieve_op, :queues, :strictly_ordered_queues,
-    :collection_interval, :poll_interval, :expiration_time
+                :collection_interval, :poll_interval, :expiration_time
 
-    def set_queues(options)
-      @queues ||= options[:queues].map { |q| "queue:#{q}" }
+    def configure_atomic_fetch(options)
+      @expiration_time = options[:expiration_time] || DEFAULT_EXPIRATION_TIME
+      @collection_interval = options.fetch(
+        :collection_wait_time,
+        DEFAULT_COLLECTION_INTERVAL
+      )
+      @poll_interval = options.fetch(:poll_interval, DEFAULT_POLL_INTERVAL)
     end
 
     def ordered_queues
@@ -53,3 +58,4 @@ module AtomicSidekiq
     end
   end
 end
+# rubocop:enable Style/ClassVars
