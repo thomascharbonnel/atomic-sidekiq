@@ -1,7 +1,7 @@
 RSpec.describe AtomicSidekiq::AtomicFetch, type: :integration do
   describe "#retrieve_work" do
     context "when there is only one queue" do
-      subject { described_class.new(queues: ["default"]) }
+      subject { described_class.new(queues: ["default"], atomic_fetch: { poll_interval: 0 }) }
 
       context "when there are no jobs enqueued" do
         it "returns nil" do
@@ -35,7 +35,7 @@ RSpec.describe AtomicSidekiq::AtomicFetch, type: :integration do
             "jid"         => jid,
             "created_at"  => time.to_f,
             "enqueued_at" => time.to_f,
-            "expire_at"   => time.to_i + AtomicSidekiq::AtomicFetch::DEFAULT_EXPIRATION,
+            "expire_at"   => time.to_i + AtomicSidekiq::AtomicFetch::DEFAULT_EXPIRATION_TIME,
           })
         end
 
@@ -63,7 +63,7 @@ RSpec.describe AtomicSidekiq::AtomicFetch, type: :integration do
       let(:queues) { ["default", "special"] }
 
       context "when queue priority is not strict" do
-        subject { described_class.new(queues: queues) }
+        subject { described_class.new(queues: queues, atomic_fetch: { poll_interval: 0 }) }
 
         context "when there are no jobs enqueued in any of the queues" do
           it "returns nil" do
@@ -111,7 +111,7 @@ RSpec.describe AtomicSidekiq::AtomicFetch, type: :integration do
       end
 
       context "when queue priority is strict" do
-        subject { described_class.new(queues: queues, strict: true) }
+        subject { described_class.new(queues: queues, strict: true, atomic_fetch: { poll_interval: 0 }) }
 
         context "when there are no jobs enqueued in any of the queues" do
           it "returns nil" do

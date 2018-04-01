@@ -16,7 +16,6 @@
 
 require "sidekiq"
 require "timecop"
-require "byebug"
 require "integration/test_job"
 require "atomic-sidekiq"
 
