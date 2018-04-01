@@ -3,6 +3,9 @@ AtomicSidekiq implements a reliable way of processing jobs using Sidekiq. By def
 
 The algorithm used by AtomicSidekiq supports both queue prioritization mechanisms: strict priority and weighted random.
 
+## Requirements
+AtomicSidekiq supports only Sidekiq 5+.
+
 ## Installation
 ```
 gem install atomic-sidekiq
