@@ -68,11 +68,11 @@ PLATFORMS
 DEPENDENCIES
   atomic-sidekiq!
   bundler (~> 1.12)
-  codecov (>= 0.1.10)
+  codecov
   rake (~> 11.3)
-  rspec (~> 3.6)
-  rubocop (~> 0.54)
-  timecop (~> 0.9)
+  rspec
+  rubocop
+  timecop
 
 BUNDLED WITH
    1.16.1
