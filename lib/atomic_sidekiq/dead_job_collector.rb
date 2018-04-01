@@ -24,14 +24,14 @@ module AtomicSidekiq
       expire_op.perform(queue, job_key)
     end
 
-    def each_keys(&block)
+    def each_keys
       it = 0
       Sidekiq.redis do |conn|
         loop do
           it, job_keys = conn.scan(it, match: keys_prefix)
           it = it.to_i
-          job_keys.each { |job_key| block.call(job_key) }
-          break if it == 0
+          job_keys.each { |job_key| yield(job_key) }
+          break if it.zero?
         end
       end
     end
