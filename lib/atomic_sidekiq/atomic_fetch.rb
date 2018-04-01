@@ -2,7 +2,7 @@
 module AtomicSidekiq
   class AtomicFetch
     IN_FLIGHT_KEY_PREFIX = "flight:".freeze
-    DEFAULT_POLL_INTERVAL = 10 # seconds
+    DEFAULT_POLL_INTERVAL = 5 # seconds
     DEFAULT_EXPIRATION_TIME = 3600 # seconds
     DEFAULT_COLLECTION_INTERVAL = 60 # seconds
 
@@ -32,11 +32,9 @@ module AtomicSidekiq
 
     def configure_atomic_fetch(options)
       @expiration_time = options[:expiration_time] || DEFAULT_EXPIRATION_TIME
-      @collection_interval = options.fetch(
-        :collection_wait_time,
-        DEFAULT_COLLECTION_INTERVAL
-      )
-      @poll_interval = options.fetch(:poll_interval, DEFAULT_POLL_INTERVAL)
+      @collection_interval = options[:collection_wait_time] ||
+                             DEFAULT_COLLECTION_INTERVAL
+      @poll_interval = options[:poll_interval] || DEFAULT_POLL_INTERVAL
     end
 
     def ordered_queues
