@@ -17,6 +17,15 @@
 require "sidekiq"
 require "timecop"
 require "integration/test_job"
+require "simplecov"
+require "codecov"
+
+SimpleCov.formatter = SimpleCov::Formatter::HTMLFormatter
+SimpleCov.formatter = SimpleCov::Formatter::Codecov if ENV['CODECOV_TOKEN']
+SimpleCov.start do
+  add_filter "/spec/"
+end
+
 require "atomic-sidekiq"
 
 RSpec.configure do |config|
