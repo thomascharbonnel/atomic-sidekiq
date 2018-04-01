@@ -9,12 +9,12 @@ module AtomicSidekiq
 
       attr_reader :in_flight_prefix
 
-      def redis(&block)
-        Sidekiq.redis { |conn| block.call(conn) }
+      def redis
+        Sidekiq.redis { |conn| yield(conn) }
       end
 
       def in_flight_job_key(queue, job)
-        jid = JSON.parse(job)['jid']
+        jid = JSON.parse(job)["jid"]
         "#{in_flight_prefix}#{queue}:#{jid}"
       end
     end

@@ -1,6 +1,11 @@
 module AtomicSidekiq
   module AtomicOperation
     class Retrieve < Base
+      RETRIEVE_SCRIPT = File.read(
+        File.join(File.dirname(__FILE__),
+                  "./lua_scripts/retrieve.lua")
+      )
+
       def perform(queues, expire_at)
         queues.each do |queue|
           res = retrieve_from_queue(queue, expire_at.to_i)
@@ -10,8 +15,6 @@ module AtomicSidekiq
       end
 
       private
-
-      RETRIEVE_SCRIPT = File.read(File.join(File.dirname(__FILE__), './lua_scripts/retrieve.lua'))
 
       def retrieve_from_queue(queue, expire_at)
         redis do |conn|
