@@ -14,18 +14,20 @@ require_relative '../lib/atomic-sidekiq'
 
 $options = {
   batches: 10,
-  jobs: 10_000,
+  jobs: 1_000,
   terminate: 0,
   flush: true,
+  expiration: 2,
   atomic_fetch: false
 }
+
 OptionParser.new do |opts|
   opts.banner = "Usage: sidekiqload [options]"
 
   opts.on("-b n", "--batches=n", "Number of job batches to be created [default 10]") do |v|
     $options[:batches] = v.to_i
   end
-  opts.on("-j n", "--jobs=n", "Number of jobs in each batch [default 10000]") do |v|
+  opts.on("-j n", "--jobs=n", "Number of jobs in each batch [default 1000]") do |v|
     $options[:jobs] = v.to_i
   end
   opts.on("-t n", "--terminate=n", "Probability of terminating the thread [default 0]") do |v|
@@ -33,6 +35,9 @@ OptionParser.new do |opts|
   end
   opts.on("-f n", "--flush=n", "Flush all jobs that have been created before [default true]") do |v|
     $options[:flush] = (v == 'true')
+  end
+  opts.on("-e n", "--expiration=n", "Expiration time in seconds for a job [default 2]") do |v|
+    $options[:expiration] = v.to_i
   end
   opts.on("-a", "--atomic-fetch", "Run the Sidekiq worker with the atomic-fetch fetcher") do |v|
     $options[:atomic_fetch] = v
@@ -47,7 +52,10 @@ Sidekiq.configure_server do |config|
   config.options[:queues] << 'default'
   config.logger.level = Logger::ERROR
   config.average_scheduled_poll_interval = 2
-  config.options[:fetch] = AtomicSidekiq::AtomicFetch if $options[:atomic_fetch]
+  config.atomic_fetch!({
+    collection_interval: 10,
+    expiration_time: $options[:expiration],
+  }) if $options[:atomic_fetch]
 end
 
 class LoadWorker

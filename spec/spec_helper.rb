@@ -49,16 +49,6 @@ RSpec.configure do |config|
     Sidekiq.redis { |conn| conn.flushall }
   end
 
-  sidekiq_pid = nil
-  config.prepend_before(:suite) do |example|
-    sidekiq_pid = spawn("sidekiq", "-r", "./spec/features/sidekiq.rb", "-q", "test", "-q", "test2")
-  end
-
-  config.append_after(:suite) do |example|
-    Sidekiq.redis { |conn| conn.flushall }
-    Process.kill("HUP", sidekiq_pid)
-  end
-
   # This option will default to `:apply_to_host_groups` in RSpec 4 (and will
   # have no way to turn it off -- the option exists only for backwards
   # compatibility in RSpec 3). It causes shared context metadata to be

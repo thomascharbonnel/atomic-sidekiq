@@ -1,8 +1,9 @@
 version: '2'
 
 services:
-  base:
+  test:
     build: .
+    command: bin/test
     env_file:
       - docker.env
     depends_on:

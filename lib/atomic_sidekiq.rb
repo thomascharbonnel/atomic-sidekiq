@@ -1,4 +1,5 @@
 require 'sidekiq'
+require_relative 'sidekiq'
 require_relative 'atomic_sidekiq/unit_of_work'
 require_relative 'atomic_sidekiq/atomic_fetch'
 require_relative 'atomic_sidekiq/dead_job_collector'

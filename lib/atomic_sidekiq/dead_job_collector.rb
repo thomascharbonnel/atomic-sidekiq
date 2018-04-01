@@ -13,7 +13,6 @@ module AtomicSidekiq
     end
 
     def collect!
-      Sidekiq.logger.error("Collecting jobs: #{queue}")
       each_keys { |job_key| expire!(job_key) }
     end
 
@@ -22,7 +21,6 @@ module AtomicSidekiq
     attr_reader :queue, :in_flight_prefix, :expire_op
 
     def expire!(job_key)
-      Sidekiq.logger.error("Expiring: #{job_key}")
       expire_op.perform(queue, job_key)
     end
 
