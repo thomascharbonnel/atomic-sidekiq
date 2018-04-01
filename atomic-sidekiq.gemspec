@@ -16,7 +16,6 @@ Gem::Specification.new do |s|
   s.required_ruby_version = ">= 2.2"
 
   s.add_development_dependency "bundler", "~> 1.12"
-  s.add_development_dependency "byebug", "~> 10.0"
   s.add_development_dependency "rake", "~> 11.3"
   s.add_development_dependency "rspec", "~> 3.6"
   s.add_development_dependency "rubocop", "~> 0.54"

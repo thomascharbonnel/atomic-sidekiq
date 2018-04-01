@@ -21,7 +21,7 @@ require "simplecov"
 require "codecov"
 
 SimpleCov.formatter = SimpleCov::Formatter::HTMLFormatter
-SimpleCov.formatter = SimpleCov::Formatter::Codecov if ENV['CODECOV_TOKEN']
+SimpleCov.formatter = SimpleCov::Formatter::Codecov if ENV["CODECOV_TOKEN"]
 SimpleCov.start do
   add_filter "/spec/"
 end
