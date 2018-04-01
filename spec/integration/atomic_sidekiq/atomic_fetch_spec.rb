@@ -21,22 +21,22 @@ RSpec.describe AtomicSidekiq::AtomicFetch, type: :integration do
 
         it "returns unit of work with used queue name" do
           work = subject.retrieve_work
-          expect(work.queue_name).to eq('queue:default')
+          expect(work.queue_name).to eq("queue:default")
         end
 
         it "returns unit of work with popped job data" do
           work = subject.retrieve_work
           job = JSON.parse(work.job)
-          expect(job).to eq({
-            "class"       => "TestJob",
+          expect(job).to eq(
+            "class" => "TestJob",
             "args"        => ["test"],
             "retry"       => true,
             "queue"       => "default",
             "jid"         => jid,
             "created_at"  => time.to_f,
             "enqueued_at" => time.to_f,
-            "expire_at"   => time.to_i + AtomicSidekiq::AtomicFetch::DEFAULT_EXPIRATION_TIME,
-          })
+            "expire_at"   => time.to_i + AtomicSidekiq::AtomicFetch::DEFAULT_EXPIRATION_TIME
+          )
         end
 
         it "creates an entry as an in-flight message" do
@@ -60,7 +60,7 @@ RSpec.describe AtomicSidekiq::AtomicFetch, type: :integration do
     end
 
     context "when there are multiple queues" do
-      let(:queues) { ["default", "special"] }
+      let(:queues) { %w[default special] }
 
       context "when queue priority is not strict" do
         subject { described_class.new(queues: queues, atomic_fetch: { poll_interval: 0 }) }
@@ -84,7 +84,7 @@ RSpec.describe AtomicSidekiq::AtomicFetch, type: :integration do
 
           it "returns unit of work from the special queue" do
             work = subject.retrieve_work
-            expect(work.queue_name).to eq('queue:special')
+            expect(work.queue_name).to eq("queue:special")
           end
         end
 
@@ -105,7 +105,7 @@ RSpec.describe AtomicSidekiq::AtomicFetch, type: :integration do
           it "returns unit of work from random queue" do
             allow_any_instance_of(Array).to receive(:shuffle).and_return(["queue:special", "queue:default"])
             work = subject.retrieve_work
-            expect(work.queue_name).to eq('queue:special')
+            expect(work.queue_name).to eq("queue:special")
           end
         end
       end
@@ -132,7 +132,7 @@ RSpec.describe AtomicSidekiq::AtomicFetch, type: :integration do
 
           it "returns unit of work from the special queue" do
             work = subject.retrieve_work
-            expect(work.queue_name).to eq('queue:special')
+            expect(work.queue_name).to eq("queue:special")
           end
         end
 
@@ -153,7 +153,7 @@ RSpec.describe AtomicSidekiq::AtomicFetch, type: :integration do
           it "returns unit of work from first queue" do
             allow_any_instance_of(Array).to receive(:shuffle).and_return(["queue:special", "queue:default"])
             work = subject.retrieve_work
-            expect(work.queue_name).to eq('queue:default')
+            expect(work.queue_name).to eq("queue:default")
           end
         end
       end

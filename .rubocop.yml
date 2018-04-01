@@ -10,3 +10,11 @@ Style/DoubleNegation:
 
 Style/Documentation:
   Enabled: false
+
+Metrics/BlockLength:
+  Exclude:
+    - spec/**/*.rb
+
+Metrics/LineLength:
+  Exclude:
+    - spec/**/*.rb
