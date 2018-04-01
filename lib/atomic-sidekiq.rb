@@ -1,1 +1,1 @@
-require_relative './atomic_sidekiq'
+require_relative "./atomic_sidekiq"
