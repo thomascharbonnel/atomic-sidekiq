@@ -1,0 +1,9 @@
+#!/bin/bash
+cp atomic-sidekiq.gemspec atomic-sidekiq.gemspec.backup
+sed -i.bak s/0.0.0/$1/g atomic-sidekiq.gemspec
+sed -i.bak s/2001-01-01/`date +%Y-%m-%d`/g atomic-sidekiq.gemspec
+gem build atomic-sidekiq.gemspec
+mv atomic-sidekiq.gemspec.backup atomic-sidekiq.gemspec
+gem push atomic-sidekiq-$1.gem
+git tag -a v$1 -m "Release v$1"
+git push origin --tags
