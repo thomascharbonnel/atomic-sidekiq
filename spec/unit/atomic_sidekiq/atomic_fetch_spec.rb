@@ -90,7 +90,6 @@ RSpec.describe AtomicSidekiq::AtomicFetch do
     context "when an expiration time is given" do
       subject do
         described_class.new(queues: %w[default special], atomic_fetch: { expiration_time: 100 })
-
       end
 
       it "calls the retrieve operation with the given time" do
@@ -117,7 +116,7 @@ RSpec.describe AtomicSidekiq::AtomicFetch do
     end
 
     context "when queue order is set to strict" do
-      subject { described_class.new(queues: ["default", "special"], strict: true) }
+      subject { described_class.new(queues: %w[default special], strict: true) }
 
       it "calls the retrieve operation with all queues in the given order" do
         subject.retrieve_work
