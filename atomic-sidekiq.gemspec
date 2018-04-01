@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
   s.license       = "MIT"
 
-  s.required_ruby_version = ">= 2.3"
+  s.required_ruby_version = ">= 2.2"
 
   s.add_development_dependency "bundler", "~> 1.12"
   s.add_development_dependency "rake", "~> 11.3"
