@@ -73,6 +73,14 @@ The performance test uses the default settings for both fetchers (default and At
 
 The reliability improvements of AtomicSidekiq come at the cost of less throughput. AtomicSidekiq's algorithm is linear instead of constant like Sidekiq's default, meaning that the cost of performance increases linearly as more jobs are added to the queue.
 
+## Web
+AtomicSidekiq provides two different pages for checking stats on the job reliability. One shows which jobs are currently "in-flight" status (even if they might have exited uexpectedly) and how long before they expire. A second page shows how many jobs have been recovered by queue and by worker class.
+
+[Screenshot in-flight here]
+_"Estimated Lost"_ shows how many jobs in-flight might have been lost (this is calculated by looking how many jobs are in "Busy" and how many are "In-flight").
+
+[Screenshot recovered here]
+
 ## Tests
 ```sh
 bundle exec rspec

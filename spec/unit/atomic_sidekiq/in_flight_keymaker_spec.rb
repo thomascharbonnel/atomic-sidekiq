@@ -7,6 +7,13 @@ RSpec.describe AtomicSidekiq::InFlightKeymaker do
     end
   end
 
+  describe "#matcher" do
+    it "returns the in-flight prefix with a wildcard matcher" do
+      matcher = subject.matcher
+      expect(matcher).to eq("flight:*")
+    end
+  end
+
   describe "#job_key" do
     context "when given job is a string" do
       let(:job) { '{"class":"TestJob","jid":"abcdef123456xyz","queue":"special","created_at":"1234567890"}' }

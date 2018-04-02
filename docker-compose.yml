@@ -8,6 +8,8 @@ services:
       - docker.env
     depends_on:
       - redis
+    ports:
+      - 3000:3000
     volumes:
       - .:/sidekiq-atomic
     image: sidekiq-atomic

@@ -9,6 +9,7 @@ module AtomicSidekiq
     end
 
     def initialize(queue, in_flight_keymaker:)
+      @recovered_stats    = RecoveredStats.new
       @queue              = queue
       @in_flight_keymaker = in_flight_keymaker
       @expire_op          = AtomicOperation::Expire.new
@@ -20,10 +21,14 @@ module AtomicSidekiq
 
     private
 
-    attr_reader :queue, :in_flight_keymaker, :expire_op
+    attr_reader :queue, :in_flight_keymaker, :expire_op, :recovered_stats
 
     def expire!(job_key)
-      expire_op.perform(queue, job_key)
+      recovered = expire_op.perform(queue, job_key)
+      return if recovered.nil?
+      job = JSON.parse(recovered[1])
+      recovered_stats.increment!(job)
+      job
     end
 
     def each_keys

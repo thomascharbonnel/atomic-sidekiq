@@ -1,0 +1,35 @@
+<header class="row">
+  <div class="col-sm-12">
+    <h3><%= t("Recovered Jobs") %></h3>
+  </div>
+</header>
+
+<div class="table_container">
+  <table class="recovered table table-hover table-bordered table-striped table-white">
+    <thead>
+      <th><%= t("Queue") %></th>
+      <th><%= t("Count") %></th>
+    </thead>
+    <% @queues.each do |key, count| %>
+      <tr>
+        <td><%= h key %> </td>
+        <td><%= h count %> </td>
+      </tr>
+    <% end %>
+  </table>
+</div>
+
+<div class="table_container">
+  <table class="recovered table table-hover table-bordered table-striped table-white">
+    <thead>
+      <th><%= t("Job Name") %></th>
+      <th><%= t("Count") %></th>
+    </thead>
+    <% @jobs.each do |key, count| %>
+      <tr>
+        <td><%= h key %> </td>
+        <td><%= h count %> </td>
+      </tr>
+    <% end %>
+  </table>
+</div>

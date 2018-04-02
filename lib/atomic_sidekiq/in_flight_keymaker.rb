@@ -4,6 +4,10 @@ module AtomicSidekiq
       @key_prefix = key_prefix
     end
 
+    def matcher
+      "#{key_prefix}:*"
+    end
+
     def queue_prefix(queue)
       normalized_name = queue.gsub(/queue:/, "")
       "#{key_prefix}:#{normalized_name}:"
