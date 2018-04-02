@@ -2,20 +2,19 @@ module AtomicSidekiq
   class UnitOfWork
     attr_reader :queue, :job
 
-    def initialize(queue = nil, job = nil,
-                   in_flight_prefix: AtomicFetch::IN_FLIGHT_KEY_PREFIX)
+    def initialize(queue = nil, job = nil, in_flight_keymaker:)
       @queue          = queue
       @job            = job
       @acknowledge_op = AtomicOperation::Acknowledge.new(
-        in_flight_prefix: in_flight_prefix
+        in_flight_keymaker: in_flight_keymaker
       )
       @requeue_op = AtomicOperation::Requeue.new(
-        in_flight_prefix: in_flight_prefix
+        in_flight_keymaker: in_flight_keymaker
       )
     end
 
     def acknowledge
-      acknowledge_op.perform(queue: queue, job: job)
+      acknowledge_op.perform(job: job)
     end
 
     def queue_name

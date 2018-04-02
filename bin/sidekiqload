@@ -5,7 +5,6 @@
 $TESTING = false
 
 #require 'ruby-prof'
-Bundler.require(:default)
 
 require 'sidekiq/cli'
 require 'sidekiq/launcher'

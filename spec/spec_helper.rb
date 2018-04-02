@@ -15,10 +15,13 @@
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 
 require "sidekiq"
+require "sidekiq/testing"
 require "timecop"
 require "integration/test_job"
 require "simplecov"
 require "codecov"
+
+Sidekiq::Testing.disable!
 
 SimpleCov.formatter = SimpleCov::Formatter::HTMLFormatter
 SimpleCov.formatter = SimpleCov::Formatter::Codecov if ENV["CODECOV_TOKEN"]

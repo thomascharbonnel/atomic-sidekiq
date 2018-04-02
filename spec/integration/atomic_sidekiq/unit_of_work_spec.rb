@@ -1,9 +1,11 @@
 RSpec.describe AtomicSidekiq::UnitOfWork, type: :integration do
+  let(:keymaker) { AtomicSidekiq::InFlightKeymaker.new("flight") }
+
   describe "#acknowledge" do
     let(:jid) { "12345-789-0" }
-    let(:job) { { class: "FakeJob", jid: jid }.to_json }
-    let(:inflight_key) { "#{AtomicSidekiq::AtomicFetch::IN_FLIGHT_KEY_PREFIX}queue:special:#{jid}" }
-    let(:subject) { described_class.new("queue:special", job) }
+    let(:job) { { class: "FakeJob", jid: jid, queue: "special" }.to_json }
+    let(:inflight_key) { "flight:special:#{jid}" }
+    let(:subject) { described_class.new("queue:special", job, in_flight_keymaker: keymaker) }
 
     before do
       Sidekiq.redis { |conn| conn.set(inflight_key, job) }
@@ -18,11 +20,11 @@ RSpec.describe AtomicSidekiq::UnitOfWork, type: :integration do
 
   describe "#requeue" do
     let(:jid) { "12345-789-0" }
-    let(:job) { { class: "FakeJob", jid: jid }.to_json }
-    let(:subject) { described_class.new("queue:special", job) }
+    let(:job) { { class: "FakeJob", jid: jid, queue: "special" }.to_json }
+    let(:subject) { described_class.new("queue:special", job, in_flight_keymaker: keymaker) }
 
     context "when the job is in-flight" do
-      let(:inflight_key) { "#{AtomicSidekiq::AtomicFetch::IN_FLIGHT_KEY_PREFIX}queue:special:#{jid}" }
+      let(:inflight_key) { "flight:special:#{jid}" }
 
       before do
         Sidekiq.redis { |conn| conn.set(inflight_key, job) }
@@ -43,7 +45,7 @@ RSpec.describe AtomicSidekiq::UnitOfWork, type: :integration do
 
     context "when the job is not in-flight " do
       let(:job) { { class: "FakeJob", jid: jid }.to_json }
-      let(:subject) { described_class.new("queue:special", job) }
+      let(:subject) { described_class.new("queue:special", job, in_flight_keymaker: keymaker) }
 
       it "adds the job to the queue" do
         subject.requeue

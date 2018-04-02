@@ -17,6 +17,7 @@ module AtomicSidekiq
       private
 
       def retrieve_from_queue(queue, expire_at)
+        in_flight_prefix = in_flight_keymaker.queue_prefix(queue)
         redis do |conn|
           conn.eval(RETRIEVE_SCRIPT, [queue, in_flight_prefix], [expire_at])
         end

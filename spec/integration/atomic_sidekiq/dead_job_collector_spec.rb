@@ -1,11 +1,13 @@
 RSpec.describe AtomicSidekiq::DeadJobCollector, type: :integration do
+  let(:keymaker) { AtomicSidekiq::InFlightKeymaker.new("flight") }
+
   describe "#collect!" do
     context "when there are no expired jobs" do
       let(:jid) { "12345-789-23456" }
       let(:expire_at) { Time.now.to_i + 60_000 }
       let(:job) { { class: "FakeJob", queue: "special", jid: jid, expire_at: expire_at }.to_json }
-      let(:inflight_key) { "#{AtomicSidekiq::AtomicFetch::IN_FLIGHT_KEY_PREFIX}queue:special:#{jid}" }
-      let(:collector) { described_class.new("queue:special") }
+      let(:inflight_key) { "flight:special:#{jid}" }
+      let(:collector) { described_class.new("queue:special", in_flight_keymaker: keymaker) }
 
       before do
         Sidekiq.redis { |conn| conn.set(inflight_key, job) }
@@ -30,8 +32,8 @@ RSpec.describe AtomicSidekiq::DeadJobCollector, type: :integration do
       let(:jid) { "12345-789-23456" }
       let(:expire_at) { Time.now.to_i - 60_000 }
       let(:job) { { class: "FakeJob", queue: "special", jid: jid, expire_at: expire_at }.to_json }
-      let(:inflight_key) { "#{AtomicSidekiq::AtomicFetch::IN_FLIGHT_KEY_PREFIX}queue:special:#{jid}" }
-      let(:collector) { described_class.new("default") }
+      let(:inflight_key) { "flight:special:#{jid}" }
+      let(:collector) { described_class.new("default", in_flight_keymaker: keymaker) }
 
       before do
         Sidekiq.redis { |conn| conn.set(inflight_key, job) }
@@ -56,8 +58,8 @@ RSpec.describe AtomicSidekiq::DeadJobCollector, type: :integration do
       let(:jid) { "12345-789-23456" }
       let(:expire_at) { Time.now.to_i - 60_000 }
       let(:job) { { class: "FakeJob", queue: "special", jid: jid, expire_at: expire_at }.to_json }
-      let(:inflight_key) { "#{AtomicSidekiq::AtomicFetch::IN_FLIGHT_KEY_PREFIX}queue:special:#{jid}" }
-      let(:collector) { described_class.new("queue:special") }
+      let(:inflight_key) { "flight:special:#{jid}" }
+      let(:collector) { described_class.new("queue:special", in_flight_keymaker: keymaker) }
 
       before do
         Sidekiq.redis { |conn| conn.set(inflight_key, job) }

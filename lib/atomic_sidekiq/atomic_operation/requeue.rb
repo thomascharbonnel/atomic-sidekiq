@@ -12,7 +12,7 @@ module AtomicSidekiq
       def requeue(conn, queue:, job:)
         conn.multi do
           conn.rpush(queue, job)
-          conn.del(in_flight_job_key(queue, job))
+          conn.del(in_flight_keymaker.job_key(job))
         end
       end
     end

@@ -1,15 +1,15 @@
 module AtomicSidekiq
   class DeadJobCollector
     class << self
-      def collect!(queues)
-        queues.each { |q| new(q).collect! }
+      def collect!(queues, in_flight_keymaker:)
+        queues.each { |q| new(q, in_flight_keymaker: in_flight_keymaker).collect! }
       end
     end
 
-    def initialize(queue, in_flight_prefix: AtomicFetch::IN_FLIGHT_KEY_PREFIX)
-      @queue            = queue
-      @in_flight_prefix = in_flight_prefix
-      @expire_op        = AtomicOperation::Expire.new
+    def initialize(queue, in_flight_keymaker:)
+      @queue              = queue
+      @in_flight_keymaker = in_flight_keymaker
+      @expire_op          = AtomicOperation::Expire.new
     end
 
     def collect!
@@ -18,7 +18,7 @@ module AtomicSidekiq
 
     private
 
-    attr_reader :queue, :in_flight_prefix, :expire_op
+    attr_reader :queue, :in_flight_keymaker, :expire_op
 
     def expire!(job_key)
       expire_op.perform(queue, job_key)
@@ -37,7 +37,7 @@ module AtomicSidekiq
     end
 
     def keys_prefix
-      "#{in_flight_prefix}#{queue}:*"
+      in_flight_keymaker.queue_matcher(queue)
     end
   end
 end

@@ -1,9 +1,9 @@
 module AtomicSidekiq
   module AtomicOperation
     class Acknowledge < Base
-      def perform(queue:, job:)
+      def perform(job:)
         redis do |conn|
-          conn.del(in_flight_job_key(queue, job))
+          conn.del(in_flight_keymaker.job_key(job))
         end
       end
     end

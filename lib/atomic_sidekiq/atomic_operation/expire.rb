@@ -7,7 +7,7 @@ module AtomicSidekiq
       )
 
       def initialize
-        super(in_flight_prefix: nil)
+        super(in_flight_keymaker: nil)
       end
 
       def perform(queue, in_flight_key)

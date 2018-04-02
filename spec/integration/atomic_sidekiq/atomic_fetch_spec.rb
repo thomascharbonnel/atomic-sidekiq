@@ -28,7 +28,7 @@ RSpec.describe AtomicSidekiq::AtomicFetch, type: :integration do
           work = subject.retrieve_work
           job = JSON.parse(work.job)
           expect(job).to eq(
-            "class" => "TestJob",
+            "class"       => "TestJob",
             "args"        => ["test"],
             "retry"       => true,
             "queue"       => "default",
@@ -40,7 +40,7 @@ RSpec.describe AtomicSidekiq::AtomicFetch, type: :integration do
         end
 
         it "creates an entry as an in-flight message" do
-          in_flight_key = "#{AtomicSidekiq::AtomicFetch::IN_FLIGHT_KEY_PREFIX}queue:default:#{jid}"
+          in_flight_key = "#{AtomicSidekiq::AtomicFetch::IN_FLIGHT_KEY_PREFIX}:default:#{jid}"
 
           subject.retrieve_work
 
@@ -49,7 +49,7 @@ RSpec.describe AtomicSidekiq::AtomicFetch, type: :integration do
         end
 
         it "stores job data in the in-flight key" do
-          in_flight_key = "#{AtomicSidekiq::AtomicFetch::IN_FLIGHT_KEY_PREFIX}queue:default:#{jid}"
+          in_flight_key = "#{AtomicSidekiq::AtomicFetch::IN_FLIGHT_KEY_PREFIX}:default:#{jid}"
 
           job = subject.retrieve_work.job
 
