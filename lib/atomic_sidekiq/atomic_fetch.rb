@@ -7,10 +7,13 @@ module AtomicSidekiq
     DEFAULT_COLLECTION_INTERVAL = 60 # seconds
 
     def initialize(options, in_flight_keymaker: nil)
-      @keymaker = in_flight_keymaker || InFlightKeymaker.new(IN_FLIGHT_KEY_PREFIX)
+      @keymaker = in_flight_keymaker ||
+                  InFlightKeymaker.new(IN_FLIGHT_KEY_PREFIX)
+
       @retrieve_op = AtomicOperation::Retrieve.new(
         in_flight_keymaker: keymaker
       )
+
       @queues ||= options[:queues].map { |q| "queue:#{q}" }
       @strictly_ordered_queues = !!options[:strict]
       @@next_collection ||= Time.now

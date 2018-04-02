@@ -17,7 +17,6 @@
 require "sidekiq"
 require "sidekiq/testing"
 require "timecop"
-require "integration/test_job"
 require "simplecov"
 require "codecov"
 
@@ -30,6 +29,7 @@ SimpleCov.start do
 end
 
 require "atomic-sidekiq"
+require "integration/test_job"
 
 RSpec.configure do |config|
   # rspec-expectations config goes here. You can use an alternate

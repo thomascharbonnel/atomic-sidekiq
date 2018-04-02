@@ -19,6 +19,10 @@ module AtomicSidekiq
       "#{key_prefix}:#{obj['queue']}:#{obj['jid']}"
     end
 
+    def job_matcher(jid)
+      "#{key_prefix}:*:#{jid}"
+    end
+
     private
 
     attr_reader :key_prefix

@@ -31,14 +31,14 @@ RSpec.describe AtomicSidekiq::InFlightKeymaker do
     context "when queue has a queue: prefix" do
       it "returns the in-flight key prefix for the given queue" do
         prefix = subject.queue_prefix("queue:default")
-        expect(prefix).to eql("flight:default:")
+        expect(prefix).to eq("flight:default:")
       end
     end
 
     context "when queue does not have a prefix" do
       it "returns the in-flight key prefix for the given queue" do
         prefix = subject.queue_prefix("default")
-        expect(prefix).to eql("flight:default:")
+        expect(prefix).to eq("flight:default:")
       end
     end
   end
@@ -47,7 +47,14 @@ RSpec.describe AtomicSidekiq::InFlightKeymaker do
     it "returns the queue prefix with a wildcard matcher" do
       allow(subject).to receive(:queue_prefix).with("queue:default").and_return("flight:default:")
       prefix = subject.queue_matcher("queue:default")
-      expect(prefix).to eql("flight:default:*")
+      expect(prefix).to eq("flight:default:*")
+    end
+  end
+
+  describe "#job_matcher" do
+    it "returns the jid with a wildcard matcher for the queue" do
+      matcher = subject.job_matcher("abcd12345")
+      expect(matcher).to eq("flight:*:abcd12345")
     end
   end
 end

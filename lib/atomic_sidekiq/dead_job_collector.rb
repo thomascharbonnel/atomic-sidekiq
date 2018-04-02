@@ -2,7 +2,9 @@ module AtomicSidekiq
   class DeadJobCollector
     class << self
       def collect!(queues, in_flight_keymaker:)
-        queues.each { |q| new(q, in_flight_keymaker: in_flight_keymaker).collect! }
+        queues.each do |q|
+          new(q, in_flight_keymaker: in_flight_keymaker).collect!
+        end
       end
     end
 

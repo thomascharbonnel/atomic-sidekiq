@@ -31,6 +31,23 @@ Sidekiq.configure_server do |config|
 end
 ```
 
+## Heartbeat
+For long running jobs that may run for an unpredictable amounts of time, you may send periodic heartbeats to reset the expiration time and allow the job to run for longer (if the job stops sending heartbeats and the expiration date run out, the job will be assumed lost and recovered). Example:
+
+```ruby
+class LongRunningWorker
+  include Sidekiq::Worker
+  include AtomicSidekiq::Heartbeat
+
+  def perform
+    (1..10_000).each do
+      ExampleClass.long_running_action!
+      heartbeat! # You can also give a specific timeout period, e.g. heartbeat!(1.hour)
+    end
+  end
+end
+```
+
 ## Benchmark
 ### Reliability
 This benchmark tests Sidekiq's ability to recover from unexpected failures. The test script forces a failure randomly 1% of the time it's running a job and measures how many jobs are able to be completed:
