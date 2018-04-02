@@ -76,10 +76,11 @@ The reliability improvements of AtomicSidekiq come at the cost of less throughpu
 ## Web
 AtomicSidekiq provides two different pages for checking stats on the job reliability. One shows which jobs are currently "in-flight" status (even if they might have exited uexpectedly) and how long before they expire. A second page shows how many jobs have been recovered by queue and by worker class.
 
-[Screenshot in-flight here]
+![In-flight Web UI](https://raw.githubusercontent.com/Colex/atomic-sidekiq/master/images/in_flight_web.png)
+
 _"Estimated Lost"_ shows how many jobs in-flight might have been lost (this is calculated by looking how many jobs are in "Busy" and how many are "In-flight").
 
-[Screenshot recovered here]
+![Recovered Stats Web UI](https://raw.githubusercontent.com/Colex/atomic-sidekiq/master/images/recovered_web.png)
 
 ## Tests
 ```sh
