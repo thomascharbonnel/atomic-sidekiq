@@ -28,7 +28,7 @@
       <th><%= t("Queue") %></th>
       <th><%= t("Expires at") %></th>
     </thead>
-    <% @jobs.each do |job| %>
+    <% @jobs&.each do |job| %>
       <tr>
         <td><%= h job["class"] %> </td>
         <td><%= h job["args"] %> </td>
