@@ -1,4 +1,5 @@
 require "sidekiq"
+require "sidekiq/web"
 require_relative "atomic_sidekiq/sidekiq/sidekiq"
 require_relative "atomic_sidekiq/in_flight_queue"
 require_relative "atomic_sidekiq/in_flight_keymaker"
