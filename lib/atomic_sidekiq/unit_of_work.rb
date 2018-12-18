@@ -18,11 +18,11 @@ module AtomicSidekiq
     end
 
     def queue_name
-      "queue:#{queue.sub(/.*queue:/, '')}"
+      queue.sub(/.*queue:/, "")
     end
 
     def requeue
-      requeue_op.perform(queue: queue, job: job)
+      requeue_op.perform(queue: "queue:#{queue_name}", job: job)
     end
 
     private
