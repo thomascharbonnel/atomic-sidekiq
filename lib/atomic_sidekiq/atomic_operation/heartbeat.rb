@@ -9,6 +9,7 @@ module AtomicSidekiq
       def perform(jid:, timeout:)
         key = in_flight_job_key(jid)
         return unless key
+
         redis do |conn|
           conn.eval(HEARTBEAT_SCRIPT, [key], [expiration_date(timeout)])
         end
@@ -26,6 +27,7 @@ module AtomicSidekiq
         loop do
           it, keys = redis { |conn| conn.scan(it, match: matcher) }
           return keys[0] if keys.count > 0
+
           it = it.to_i
           return if it.zero?
         end

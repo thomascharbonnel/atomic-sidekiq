@@ -28,14 +28,14 @@ RSpec.describe AtomicSidekiq::AtomicFetch, type: :integration do
           work = subject.retrieve_work
           job = JSON.parse(work.job)
           expect(job).to eq(
-            "class"       => "TestJob",
-            "args"        => ["test"],
-            "retry"       => true,
-            "queue"       => "default",
-            "jid"         => jid,
-            "created_at"  => time.to_f,
+            "class" => "TestJob",
+            "args" => ["test"],
+            "retry" => true,
+            "queue" => "default",
+            "jid" => jid,
+            "created_at" => time.to_f,
             "enqueued_at" => time.to_f,
-            "expire_at"   => time.to_i + AtomicSidekiq::AtomicFetch::DEFAULT_EXPIRATION_TIME
+            "expire_at" => time.to_i + AtomicSidekiq::AtomicFetch::DEFAULT_EXPIRATION_TIME
           )
         end
 

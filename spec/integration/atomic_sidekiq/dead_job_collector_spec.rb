@@ -83,5 +83,36 @@ RSpec.describe AtomicSidekiq::DeadJobCollector, type: :integration do
         }.to_json)
       end
     end
+
+    context "when collector is called with skip_recovery set to true" do
+      let(:jid) { "12345-789-23456" }
+      let(:expire_at) { Time.now.to_i - 60_000 }
+      let(:job) { { class: "FakeJob", queue: "cron", jid: jid, expire_at: expire_at }.to_json }
+      let(:inflight_key) { "flight:cron:#{jid}" }
+      let(:collector) do
+        described_class.new(
+          "queue:cron",
+          in_flight_keymaker: keymaker
+        )
+      end
+
+      before do
+        Sidekiq.redis { |conn| conn.set(inflight_key, job) }
+      end
+
+      it "removes the expired jobs from in-flight" do
+        collector.collect!(skip_recovery: true)
+
+        msg = Sidekiq.redis { |conn| conn.get(inflight_key) }
+        expect(msg).to be_nil
+      end
+
+      it "does not add expired job to the end of the queue" do
+        collector.collect!(skip_recovery: true)
+
+        msg = Sidekiq.redis { |conn| conn.lpop("queue:cron") }
+        expect(msg).to be_nil
+      end
+    end
   end
 end
