@@ -116,7 +116,30 @@ RSpec.describe AtomicSidekiq::AtomicFetch do
       it "runs the DeadJobCollector on all queues in a random order" do
         allow_any_instance_of(Array).to receive(:shuffle).and_return(["queue:special", "queue:default"])
         Timecop.freeze(Time.now + 1) { subject.retrieve_work }
-        expect(AtomicSidekiq::DeadJobCollector).to have_received(:collect!).with(["queue:special", "queue:default"], in_flight_keymaker: keymaker)
+        expect(AtomicSidekiq::DeadJobCollector).to have_received(:collect!).with(
+          ["queue:special", "queue:default"],
+          in_flight_keymaker: keymaker,
+          skip_recovery_queues: []
+        )
+      end
+    end
+
+    context "when ignored queues are provided" do
+      subject do
+        described_class.new(
+          { queues: %w[default special], atomic_fetch: { ignored_queues: ["special"] } },
+          in_flight_keymaker: keymaker
+        )
+      end
+
+      it "runs the DeadJobCollector on all queues skipping recovery on ignored queues" do
+        allow_any_instance_of(Array).to receive(:shuffle).and_return(["queue:special", "queue:default"])
+        Timecop.freeze(Time.now + 1) { subject.retrieve_work }
+        expect(AtomicSidekiq::DeadJobCollector).to have_received(:collect!).with(
+          ["queue:special", "queue:default"],
+          in_flight_keymaker: keymaker,
+          skip_recovery_queues: ["queue:special"]
+        )
       end
     end
 

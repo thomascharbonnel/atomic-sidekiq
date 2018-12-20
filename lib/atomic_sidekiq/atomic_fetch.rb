@@ -25,14 +25,16 @@ module AtomicSidekiq
       collect_dead_jobs!
       work = retrieve_op.perform(ordered_queues, expire_at)
       return UnitOfWork.new(*work, in_flight_keymaker: keymaker) if work
+
       sleep(poll_interval)
       nil
     end
 
     private
 
-    attr_reader :retrieve_op, :queues, :strictly_ordered_queues,
-                :collection_interval, :poll_interval, :expiration_time,
+    attr_reader :retrieve_op, :queues, :ignored_queues,
+                :strictly_ordered_queues, :collection_interval,
+                :poll_interval, :expiration_time,
                 :keymaker
 
     def configure_atomic_fetch(options)
@@ -40,6 +42,8 @@ module AtomicSidekiq
       @collection_interval = options[:collection_wait_time] ||
                              DEFAULT_COLLECTION_INTERVAL
       @poll_interval = options[:poll_interval] || DEFAULT_POLL_INTERVAL
+      @ignored_queues = (options[:ignored_queues] || [])
+                        .map { |q| "queue:#{q}" }
     end
 
     def ordered_queues
@@ -52,8 +56,13 @@ module AtomicSidekiq
 
     def collect_dead_jobs!
       return if @@next_collection > Time.now
+
       @@next_collection = Time.now + collection_interval
-      DeadJobCollector.collect!(ordered_queues, in_flight_keymaker: keymaker)
+      DeadJobCollector.collect!(
+        ordered_queues,
+        in_flight_keymaker: keymaker,
+        skip_recovery_queues: ignored_queues
+      )
     end
 
     def expire_at

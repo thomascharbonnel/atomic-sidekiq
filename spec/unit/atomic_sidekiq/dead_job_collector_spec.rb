@@ -26,8 +26,8 @@ RSpec.describe AtomicSidekiq::DeadJobCollector do
       allow(described_class).to receive(:new)
         .with("queue:default", in_flight_keymaker: keymaker)
         .and_return(default_collector)
-      described_class.collect!(queues, in_flight_keymaker: keymaker)
-      expect(default_collector).to have_received(:collect!).once
+      described_class.collect!(queues, in_flight_keymaker: keymaker, skip_recovery_queues: ["queue:special"])
+      expect(default_collector).to have_received(:collect!).with(skip_recovery: false).once
     end
 
     it "collects the dead jobs for queue:special" do
@@ -35,8 +35,8 @@ RSpec.describe AtomicSidekiq::DeadJobCollector do
       allow(described_class).to receive(:new)
         .with("queue:special", in_flight_keymaker: keymaker)
         .and_return(special_collector)
-      described_class.collect!(queues, in_flight_keymaker: keymaker)
-      expect(special_collector).to have_received(:collect!).once
+      described_class.collect!(queues, in_flight_keymaker: keymaker, skip_recovery_queues: ["queue:special"])
+      expect(special_collector).to have_received(:collect!).with(skip_recovery: true).once
     end
   end
 end

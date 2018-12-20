@@ -1,7 +1,6 @@
 module AtomicSidekiq
   class RecoveredStats
     def increment!(job)
-      puts "INCREMENTING"
       increment_by_job!(job["class"])
       increment_by_queue!(job["queue"])
     end

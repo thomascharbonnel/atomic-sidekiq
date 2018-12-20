@@ -21,12 +21,15 @@ end
 ```
 
 ## Configuration
-By default, jobs will expire and be re-queued after 1 hour if not acknowledged, and the "Collector" will check if for expired jobs every 60 seconds. This can be reconfigured as desired: _(Note that collection adds some overhead)_
+By default, jobs will expire and be re-queued after 1 hour if not acknowledged, and the "Collector" will check if for expired jobs every 60 seconds. This can be reconfigured as desired: _(Note that collection adds some overhead)_. You
+may also configure which queues shouldn't be recovered using the property `ignored_queues`. Jobs in those queues will
+be expired without being pushed into the queue again.
 ```ruby
 Sidekiq.configure_server do |config|
   config.atomic_fetch!({
-    collection_interval: 5, # Unit: seconds
-    expiration_time: 1800   # Unit: seconds (30 minutes)
+    collection_interval: 5,   # Unit: seconds
+    expiration_time: 1800,    # Unit: seconds (30 minutes)
+    ignored_queues: ['cron'],
   })
 end
 ```
