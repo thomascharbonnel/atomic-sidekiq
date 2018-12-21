@@ -9,6 +9,14 @@ module AtomicSidekiq
       retrieve_jobs(keys)
     end
 
+    def delete_job(jid)
+      job_matcher = keymaker.job_matcher(jid)
+      job_keys = retrieve_keys(job_matcher)
+      return 0 if job_keys.empty?
+
+      Sidekiq.redis { |conn| conn.del(*job_keys) }
+    end
+
     private
 
     attr_reader :keymaker
@@ -30,6 +38,10 @@ module AtomicSidekiq
       Sidekiq.redis do |conn|
         keys.map { |key| JSON.parse(conn.get(key)) }
       end
+    end
+
+    def retrieve_keys(key_wildcard)
+      Sidekiq.redis { |conn| conn.keys(key_wildcard) }
     end
   end
 end

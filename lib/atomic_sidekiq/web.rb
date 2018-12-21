@@ -4,6 +4,7 @@ module AtomicSidekiq
 
     def self.registered(app)
       register_inflight(app)
+      register_delete_inflight(app)
       register_recovered(app)
     end
 
@@ -19,6 +20,14 @@ module AtomicSidekiq
         @jobs = @jobs[start_idx..end_idx]
 
         erb File.read(File.join(VIEW_PATH, "in_flight.erb"))
+      end
+    end
+
+    def self.register_delete_inflight(app)
+      app.post "/in-flight/:jid/delete" do
+        AtomicSidekiq::InFlightQueue.new.delete_job(route_params[:jid])
+
+        redirect "#{root_path}in-flight"
       end
     end
 
