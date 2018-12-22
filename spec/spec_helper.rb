@@ -15,6 +15,7 @@
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 
 require "sidekiq"
+require "sidekiq/web"
 require "sidekiq/testing"
 require "timecop"
 require "simplecov"
@@ -27,6 +28,9 @@ SimpleCov.formatter = SimpleCov::Formatter::Codecov if ENV["CODECOV_TOKEN"]
 SimpleCov.start do
   add_filter "/spec/"
 end
+
+require 'capybara/rspec'
+Capybara.app = Sidekiq::Web
 
 require "atomic-sidekiq"
 require "integration/test_job"

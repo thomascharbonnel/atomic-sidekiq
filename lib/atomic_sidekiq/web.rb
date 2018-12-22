@@ -17,7 +17,7 @@ module AtomicSidekiq
 
         start_idx = (@current_page - 1) * @count
         end_idx = (@current_page * @count) - 1
-        @jobs = @jobs[start_idx..end_idx]
+        @jobs = @jobs[start_idx..end_idx] || []
 
         erb File.read(File.join(VIEW_PATH, "in_flight.erb"))
       end
