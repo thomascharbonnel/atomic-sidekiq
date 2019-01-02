@@ -22,7 +22,9 @@ Gem::Specification.new do |s|
   s.add_development_dependency "timecop", "~> 0.9"
   s.add_development_dependency "codecov", ">= 0.1.10"
   s.add_development_dependency "thin"
-  s.add_development_dependency "capybara"
+  s.add_development_dependency "capybara", "~> 3.1.1"
+  s.add_development_dependency "xpath", "~> 3.1.0"
+  s.add_development_dependency "selenium-webdriver"
 
   s.add_runtime_dependency "sidekiq", "~> 5.0"
 end
