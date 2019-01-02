@@ -45,7 +45,7 @@
           <td>
             <form action="<%= root_path %>in-flight/<%= CGI.escape(job["jid"]) %>/delete" method="post">
               <%= csrf_tag if respond_to?(:csrf_tag) %>
-              <input class='btn btn-xs btn-danger pull-left' type="submit" name="delete" value="<%= t('Delete') %>" data-confirm="<%= t('Are you sure?', :jid => job["jid"]) %>"/>
+              <input id="jid-<%= job["jid"] %>" class='btn btn-xs btn-danger pull-left' type="submit" name="delete" value="<%= t('Delete') %>" data-confirm="<%= t('Are you sure?', :jid => job["jid"]) %>"/>
             </form>
           </td>
         </tr>
