@@ -15,6 +15,7 @@
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 
 require "sidekiq"
+require "sidekiq/web"
 require "sidekiq/testing"
 require "timecop"
 require "simplecov"
@@ -28,10 +29,33 @@ SimpleCov.start do
   add_filter "/spec/"
 end
 
+require 'capybara/rspec'
+require 'capybara/dsl'
+Capybara.app = Sidekiq::Web
+
+require "selenium/webdriver"
+Capybara.register_driver :headless_chrome do |app|
+  capabilities = Selenium::WebDriver::Remote::Capabilities.chrome(
+    chromeOptions: { args: %w(headless disable-gpu no-sandbox) }
+  )
+
+  Capybara::Selenium::Driver.new app,
+    browser: :chrome,
+    desired_capabilities: capabilities
+end
+
+Capybara.javascript_driver = :headless_chrome
+Capybara.register_server :thin do |app, port, host|
+   require 'rack/handler/thin'
+   Rack::Handler::Thin.run(app, :Port => port, :Host => host)
+end
+Capybara.server = :thin
+
 require "atomic-sidekiq"
 require "integration/test_job"
 
 RSpec.configure do |config|
+  config.include Capybara::DSL
   # rspec-expectations config goes here. You can use an alternate
   # assertion/expectation library such as wrong or the stdlib/minitest
   # assertions if you prefer.

@@ -8,37 +8,48 @@
 </header>
 
 <div class="table_container">
-  <table class="inflight table table-hover table-bordered table-striped table-white">
+  <table id="inflight-stats" class="inflight table table-hover table-bordered table-striped table-white">
     <thead>
       <th><%= t("Total In-flight") %></th>
       <th><%= t("Estimated Lost") %></th>
     </thead>
+    <tbody>
       <tr>
         <td><%= number_with_delimiter(@total_size) %> </td>
         <td><%= number_with_delimiter(@total_size - workers.size) %> </td>
       </tr>
+    </tbody>
   </table>
 </div>
 
 <div class="table_container">
-  <table class="inflight table table-hover table-bordered table-striped table-white">
+  <table id="inflight-jobs" class="inflight table table-hover table-bordered table-striped table-white">
     <thead>
       <th><%= t("Job") %></th>
       <th><%= t("Args") %></th>
       <th><%= t("Queue") %></th>
       <th><%= t("Expires at") %></th>
+      <th><%= t("Actions") %></th>
     </thead>
-    <% @jobs&.each do |job| %>
-      <tr>
-        <td><%= h job["class"] %> </td>
-        <td><%= h job["args"] %> </td>
-        <td>
-          <a href="<%= root_path %>queues/<%= CGI.escape(job["queue"]) %>"><%= h job["queue"] %></a>
-        </td>
-        <td>
-          <%= relative_time(Time.at(job["expire_at"]))  %>
-        </td>
-      </tr>
-    <% end %>
+    <tbody>
+      <% @jobs.each do |job| %>
+        <tr>
+          <td><%= h job["class"] %> </td>
+          <td><%= h job["args"] %> </td>
+          <td>
+            <a href="<%= root_path %>queues/<%= CGI.escape(job["queue"]) %>"><%= h job["queue"] %></a>
+          </td>
+          <td>
+            <%= relative_time(Time.at(job["expire_at"]))  %>
+          </td>
+          <td>
+            <form action="<%= root_path %>in-flight/<%= CGI.escape(job["jid"]) %>/delete" method="post">
+              <%= csrf_tag if respond_to?(:csrf_tag) %>
+              <input id="jid-<%= job["jid"] %>" class='btn btn-xs btn-danger pull-left' type="submit" name="delete" value="<%= t('Delete') %>" data-confirm="<%= t('Are you sure?', :jid => job["jid"]) %>"/>
+            </form>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
   </table>
 </div>

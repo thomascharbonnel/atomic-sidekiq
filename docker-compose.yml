@@ -1,18 +1,22 @@
 version: '2'
 
 services:
-  test:
+  base:
     build: .
-    command: bin/test
     env_file:
       - docker.env
+    volumes:
+      - .:/sidekiq-atomic
+    image: sidekiq-atomic
+
+  test:
+    extends:
+      service: base
+    command: bin/test
     depends_on:
       - redis
     ports:
       - 3000:3000
-    volumes:
-      - .:/sidekiq-atomic
-    image: sidekiq-atomic
     volumes_from:
       - bundle
 
